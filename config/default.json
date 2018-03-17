@@ -1,0 +1,50 @@
+{
+    "express": {
+        "port": 12400,
+        "secure": false,
+        "cert": null,
+        "key": null,
+        "behindProxy": false
+    },
+    "session": {
+        "secret": "01234567890123456789",
+        "timeout": 60000
+    },
+    "mongo": {
+        "server": "localhost",
+        "port": 27017,
+        "database": "memegram",
+        "user": "memegram",
+        "password": "password"
+    },
+    "log": {
+        "appenders": {
+            "console": {
+                "type": "console",
+                "layout": {
+                    "type": "pattern",
+                    "pattern": "%d{hh:mm:ss} %p %c %m"
+                }
+            },
+            "file": {
+                "type": "file",
+                "filename": "server.log",
+                "maxLogSize": 1000000,
+                "backups": 3,
+                "layout": {
+                    "type": "pattern",
+                    "pattern": "%d{hh:mm:ss} %p %c %m"
+                }
+            }
+        },
+        "categories": {
+            "default": { 
+                "appenders": [ 
+                    "console", 
+                    "file" 
+                ], 
+                "level": "debug" 
+            }
+        }
+    }
+}
