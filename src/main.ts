@@ -1,6 +1,5 @@
 import * as log4js from "log4js";
 import * as mongoose from "mongoose";
-import * as cachegoose from "cachegoose";
 import * as express from "express";
 import * as session from "express-session";
 import * as uuid from "uuid";
@@ -52,9 +51,6 @@ import { MongooseSessionStore } from "./utility/mongoose-session-store";
         log.error(`Failed to connect to MongoDB: ${error}`);
         return;
     }
-
-    // Connect to Redis cache
-    
 
     // Create Express instance
     var app = express();

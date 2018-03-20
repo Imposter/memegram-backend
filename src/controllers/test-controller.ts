@@ -1,7 +1,7 @@
 import * as os from "os";
 import { PassThrough } from "stream";
 import { Result, ResultError, ResultCode } from "../core/result";
-import { JsonController, Get, Post, Authorized, UploadedFile, BodyParam, Param, Req, Res, NotFoundError } from "routing-controllers";
+import { JsonController, Get, Post, Authorized, Param, BodyParam, UploadedFile, NotFoundError } from "routing-controllers";
 import { Storage } from "../database/storage";
 
 // Get Image model
