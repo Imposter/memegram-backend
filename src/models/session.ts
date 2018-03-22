@@ -2,17 +2,12 @@ import { getConfig } from "../config";
 import { Schema } from "../database/schema";
 import { prop, Ref, Typegoose, ModelType, InstanceType } from "typegoose";
 import { Role } from "./common";
-
-export interface SessionInfo {
-    authorized: boolean;
-    id: string;
-    name: string;
-    email: string;
-    role: Role;
-}
+import { User } from "./user";
 
 export interface SessionData extends Express.SessionData {
-    info?: SessionInfo;
+    authorized?: boolean;
+    loginAttempts?: number;
+    user?: User;
 }
 
 export class Session extends Schema {

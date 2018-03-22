@@ -17,11 +17,11 @@ declare namespace gridfs {
     
     interface Model {
         write(fileDetails: FileDetails, stream: Readable, done: (error: Error, createdFile: File) => void): void;
-        findById(objectId: mongoose.Types.ObjectId, done?: (error: Error, file: File) => void): void;
+        findById(objectId: mongoose.Types.ObjectId | string, done?: (error: Error, file: File) => void): void;
         findOne(conditions: any, callback?: (err: any, file: File) => void);
-        readById(objectId: mongoose.Types.ObjectId, done?: (error: Error, fileContent: any) => void): Stream;
+        readById(objectId: mongoose.Types.ObjectId | string, done?: (error: Error, fileContent: any) => void): Stream;
         readByFileName(fileName: string, done?: (error: Error, fileContent) => void): Stream;
-        unlinkById(objectId: mongoose.Types.ObjectId, done: (error: Error, unlinkedFile: File) => void): void;
+        unlinkById(objectId: mongoose.Types.ObjectId | string, done: (error: Error, unlinkedFile: File) => void): void;
     }
 
     interface File extends mongoose.Document {
@@ -119,7 +119,7 @@ export class Model {
         });
     }
 
-    public findById(objectId: mongoose.Types.ObjectId): Promise<File> {
+    public findById(objectId: mongoose.Types.ObjectId | string): Promise<File> {
         return new Promise((resolve, reject) => {
             this.instance.findById(objectId, (error, file) => {
                 if (error) reject(error);
@@ -139,7 +139,7 @@ export class Model {
         });
     }
 
-    public readById(objectId: mongoose.Types.ObjectId): Promise<Stream> {
+    public readById(objectId: mongoose.Types.ObjectId | string): Promise<Stream> {
         return new Promise((resolve, reject) => {
             var stream = this.instance.readById(objectId);
             if (!stream) reject(new Error("Unable to read"));
@@ -155,7 +155,7 @@ export class Model {
         });
     }
 
-    public unlinkById(objectId: mongoose.Types.ObjectId): Promise<File> {
+    public unlinkById(objectId: mongoose.Types.ObjectId | string): Promise<File> {
         return new Promise((resolve, reject) => {
             this.instance.unlinkById(objectId, (error, unlinkedFile) => {
                 if (error) reject(error);

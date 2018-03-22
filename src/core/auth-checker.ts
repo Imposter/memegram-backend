@@ -10,12 +10,12 @@ export async function AuthChecker(action: Action, roles: any[]): Promise<boolean
     var token = request.headers["authorization"];
 
     // Check if session exists
-    var session = (request.session as SessionData).data;
-    if (session != null && session.authorized) {
+    var session = request.session as SessionData;
+    if (session != null && session.authorized && session.user != null) {
         // Check role
         if (!roles.length)
             return true;
-        if (roles.indexOf(session.role) > 0)
+        if (roles.indexOf(session.user.role) > 0)
             return true;
 
         return false;
