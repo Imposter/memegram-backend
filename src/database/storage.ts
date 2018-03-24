@@ -3,18 +3,18 @@ import { Readable, Stream } from "stream";
 const gridfs: (options: gridfs.Options) => gridfs.GridFS = require("mongoose-gridfs");
 
 // Typings for mongoose-gridfs
-declare namespace gridfs {    
+export declare namespace gridfs {
     interface FileDetails {
         filename?: string;
         contentType?: string;
     }
-    
+
     interface Options {
         collection?: string;
         model?: string;
         mongooseConnection: mongoose.Connection;
     }
-    
+
     interface Model {
         write(fileDetails: FileDetails, stream: Readable, done: (error: Error, createdFile: File) => void): void;
         findById(objectId: mongoose.Types.ObjectId | string, done?: (error: Error, file: File) => void): void;

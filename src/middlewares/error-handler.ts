@@ -24,8 +24,8 @@ export class CustomErrorHandler implements ExpressErrorMiddlewareInterface {
         response.header("Content-Type", "application/json")
             .status(httpCode)
             .send(JSON.stringify({
-            code: statusCode,
-            error: error.message
-        }));
+                code: statusCode,
+                error: error.message
+            }));
     }
 }

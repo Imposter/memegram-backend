@@ -7,7 +7,7 @@ import * as mongoose from "mongoose";
 // Import typegoose and gridfs
 import { prop, pre, ModelType, Typegoose, InstanceType } from "typegoose";
 
-@pre<Schema>("save", function(next) {
+@pre<Schema>("save", function (next) {
     this.updatedAt = new Date();
     if (this.createdAt == null) {
         this.createdAt = this.updatedAt;
@@ -25,7 +25,7 @@ export class Schema extends Typegoose {
         return (this as any)._id;
     }
 
-    public static getModel<TSchema extends Schema>(schemaType: new() => TSchema): mongoose.Model<InstanceType<TSchema>> {
+    public static getModel<TSchema extends Schema>(schemaType: new () => TSchema): mongoose.Model<InstanceType<TSchema>> {
         return new schemaType().getModelForClass(schemaType, {
             existingMongoose: mongoose
         });

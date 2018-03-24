@@ -12,7 +12,6 @@ import * as https from "https";
 import { getConfig, Config } from "./config";
 import { Schema } from "./database/schema";
 import { AuthChecker } from "./core/auth-checker";
-import { HashAlgorithm } from "./models/common";
 import { User, Users } from "./models/user";
 import { MongooseSessionStore } from "./utility/mongoose-session-store";
 
@@ -34,7 +33,7 @@ import { MongooseSessionStore } from "./utility/mongoose-session-store";
     var log = log4js.getLogger("Main");
 
     // Configure mongoose to use global promises
-	(mongoose as any).Promise = global.Promise;
+    (mongoose as any).Promise = global.Promise;
 
     // Connect to MongoDB server
     var connectionString = `mongodb://${config.mongo.server}:${config.mongo.port}/${config.mongo.database}`;
@@ -77,11 +76,11 @@ import { MongooseSessionStore } from "./utility/mongoose-session-store";
         },
         store: new MongooseSessionStore()
     }));
-    
+
     // Apply routing config to express app
     rc.useExpressServer(app, {
-        controllers: [ `${__dirname}/controllers/**/*.js` ],
-        middlewares: [ `${__dirname}/middlewares/**/*.js` ],
+        controllers: [`${__dirname}/controllers/**/*.js`],
+        middlewares: [`${__dirname}/middlewares/**/*.js`],
         routePrefix: "/api",
         cors: true,
         authorizationChecker: AuthChecker,
@@ -91,18 +90,18 @@ import { MongooseSessionStore } from "./utility/mongoose-session-store";
             paramOptions: {
                 // Require request parameters
                 required: true
-            }	
+            }
         }
     });
-    
+
     // Create HTTP server
     var server = null;
     if (!config.express.secure) {
-    	server = http.createServer(app);
+        server = http.createServer(app);
     } else {
-    	var key = config.express.key == null ? new Buffer("") : fs.readFileSync(config.express.key);
+        var key = config.express.key == null ? new Buffer("") : fs.readFileSync(config.express.key);
         var cert = config.express.cert == null ? new Buffer("") : fs.readFileSync(config.express.cert);
-        
+
         server = https.createServer({
             key: key,
             cert: cert,
@@ -112,6 +111,6 @@ import { MongooseSessionStore } from "./utility/mongoose-session-store";
 
     // Start listening on port
     server.listen(config.express.port);
-    
+
     log.info(`Server is running on port ${config.express.port}`);
 })();

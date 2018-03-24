@@ -1,4 +1,8 @@
 {
+    "app": {
+        "hashAlgorithm": 0,
+        "postCharacterLimit": 100
+    },
     "express": {
         "port": 12400,
         "secure": false,

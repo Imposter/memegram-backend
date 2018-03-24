@@ -1,6 +1,6 @@
 import { Schema } from "../database/schema";
 import { prop, Ref, Typegoose, ModelType, InstanceType } from "typegoose";
-import { Role, HashAlgorithm } from "./common";
+import { Role, HashAlgorithm } from "../core/common";
 
 export class User extends Schema {
     @prop({ required: true })

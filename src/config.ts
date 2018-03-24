@@ -1,6 +1,11 @@
 import * as log4js from "log4js";
 import * as config from "config";
 
+export interface AppConfig {
+    hashAlgorithm: number;
+    postCharacterLimit: number;
+}
+
 export interface ExpressConfig {
     port: number;
     secure?: boolean;
@@ -23,6 +28,7 @@ export interface MongoConfig {
 }
 
 export interface Config {
+    app: AppConfig;
     express: ExpressConfig;
     session: SessionConfig;
     mongo: MongoConfig;
@@ -30,7 +36,8 @@ export interface Config {
 }
 
 export function getConfig(): Config {
-    return <Config> {
+    return <Config>{
+        app: config.get<AppConfig>("app"),
         express: config.get<ExpressConfig>("express"),
         session: config.get<SessionConfig>("session"),
         mongo: config.get<MongoConfig>("mongo"),

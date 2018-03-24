@@ -5,13 +5,13 @@ export enum ResultCode {
     Ok = 1000,
     InternalError = 1001,
     Unauthorized = 1002,
-    
+
     // User component
     InvalidUserId = 1100,
     InvalidCredentials = 1101,
     AlreadyAuthenticated = 1102,
     UserAlreadyExists = 1103,
-    
+
     // ...
 
     NotImplemented = 9999

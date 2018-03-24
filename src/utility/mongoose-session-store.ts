@@ -2,7 +2,7 @@ import * as express from "express";
 import * as session from "express-session";
 import * as util from "util";
 import * as events from "events";
-import { Sessions, Session, SessionInfo, SessionData } from "../models/session";
+import { Sessions, Session, SessionData } from "../models/session";
 
 export class MongooseSessionStore extends events.EventEmitter {
     public async get(sid: string, callback: (err: any, session: Express.SessionData) => void) {
@@ -31,7 +31,7 @@ export class MongooseSessionStore extends events.EventEmitter {
             callback(error);
         }
     }
-    
+
     public async destroy(sid: string, callback: (err: any) => void) {
         try {
             await Sessions.findOneAndRemove({ sid: sid });
