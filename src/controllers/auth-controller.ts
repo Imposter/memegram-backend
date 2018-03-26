@@ -15,7 +15,7 @@ export default class AuthController {
     @Post("/create")
     async create(@Session() session: SessionData,
         @BodyParam("email") email: string,
-        @BodyParam("userName") userName: string,
+        @BodyParam("name") name: string,
         @BodyParam("password") password: string) {
         // Check if a session already exists (return failure)
         if (session.authorized) {
@@ -28,7 +28,7 @@ export default class AuthController {
 
         // Check if an account already exists with either the username or email supplied
         var user = await Users.findOne({
-            $or: [{ name: userName }, { email: email }]
+            $or: [{ name: name }, { email: email }]
         });
 
         if (user) {
@@ -42,7 +42,7 @@ export default class AuthController {
         var hash: string = null;
         var hashAlg = Config.app.hashAlgorithm;
         if (hashAlg == HashAlgorithm.Hash1) {
-            hash = hash1(salt, email, userName, password);
+            hash = hash1(salt, email, name, password);
         }
 
         // If no hash was calculated, there is a configuration error
@@ -52,7 +52,7 @@ export default class AuthController {
 
         // Create user and store in database
         user = await Users.create(<User>{
-            name: userName,
+            name: name,
             email: email,
             passwordHashAlg: hashAlg,
             passwordHash: hash,
@@ -71,16 +71,16 @@ export default class AuthController {
         });
     }
 
-    @Get("/checkUsername")
-    async checkUsername(@Session() session: SessionData,
-        @BodyParam("userName") userName: string) {
+    @Get("/checkName")
+    async checkName(@Session() session: SessionData,
+        @BodyParam("name") name: string) {
         // Check if session data already exists
         if (session.authorized) {
             return new Result(ResultCode.AlreadyAuthenticated);
         }
 
         // Check if an account already exists with the specified username
-        var user = await Users.findOne({ name: userName });
+        var user = await Users.findOne({ name: name });
         if (user) {
             return new Result(ResultCode.UserAlreadyExists);
         }

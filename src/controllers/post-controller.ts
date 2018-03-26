@@ -10,6 +10,16 @@ const Images = Storage.getModel("image");
 // TODO: Implement
 @JsonController("/post")
 export default class PostController {
+	// NOTE: This works
+	// TODO: Design on paper
+	@Post("/test")
+	async test(@BodyParam("caption") caption: string,
+		@UploadedFile("file") file: Express.Multer.File) {
+		console.log(caption);
+		console.log(file);
+		return "";
+	}
+
     @Post("/")
     async createPost(@BodyParam("caption") caption: string) {
 
@@ -24,6 +34,7 @@ export default class PostController {
         var result = await Images.findById(id);
 
         if (result) {
+			// TODO: Set content-type!
             return await result.read();
         } else {
             throw new NotFoundError(`File ${id} could not be located`);
