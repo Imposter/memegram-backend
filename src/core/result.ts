@@ -10,7 +10,8 @@ export enum ResultCode {
     InvalidUserId = 1100,
     InvalidCredentials = 1101,
     AlreadyAuthenticated = 1102,
-    UserAlreadyExists = 1103,
+	UserAlreadyExists = 1103,
+	UserAvailable = 1104,
 
     // ...
 

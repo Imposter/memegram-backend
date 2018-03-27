@@ -7,7 +7,7 @@ import { Role } from "../core/common";
 
 @JsonController("/user")
 export default class UserController {
-	@Get("/")
+	@Post("/find")
 	async getUser(@BodyParam("name") name: string) {
 		// TODO: Return user
 	}

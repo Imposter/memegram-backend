@@ -4,6 +4,7 @@ import * as express from "express";
 import * as session from "express-session";
 import * as uuid from "uuid";
 import * as cors from "cors";
+import * as compression from "compression";
 import * as ms from "express-mongo-sanitize";
 import * as rc from "routing-controllers";
 import * as fs from "fs";
@@ -61,7 +62,8 @@ import { MongooseSessionStore } from "./utility/mongoose-session-store";
     app.use((error: Error, request: express.Request, response: express.Response, next: (error: any) => any) => {
         log.error(`Express error: ${error.stack}`);
         next(error);
-    });
+	});
+	app.use(compression());
     app.use(ms());
     app.use(session({
         genid: () => uuid.v4(),

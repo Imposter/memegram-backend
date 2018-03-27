@@ -71,7 +71,7 @@ export default class AuthController {
         });
     }
 
-    @Get("/checkName")
+    @Post("/checkName")
     async checkName(@Session() session: SessionData,
         @BodyParam("name") name: string) {
         // Check if session data already exists
@@ -84,9 +84,11 @@ export default class AuthController {
         if (user) {
             return new Result(ResultCode.UserAlreadyExists);
         }
+		
+		return new Result(ResultCode.UserAvailable);
     }
 
-    @Get("/checkEmail")
+    @Post("/checkEmail")
     async checkEmail(@Session() session: SessionData,
         @BodyParam("email") email: string) {
         // Check if session data already exists
@@ -98,13 +100,15 @@ export default class AuthController {
         var user = await Users.findOne({ email: email });
         if (user) {
             return new Result(ResultCode.UserAlreadyExists);
-        }
+		}
+		
+		return new Result(ResultCode.UserAvailable);
     }
 
-    @Get("/login")
+    @Post("/login")
     async login(@Session() session: SessionData,
         @BodyParam("email") email: string,
-        @BodyParam("passwordHash") passwordHash: number) {
+        @BodyParam("password") password: string) {
         // Check if session data exists (return previous session)
         if (session.authorized) {
             return new Result(ResultCode.AlreadyAuthenticated, <AuthCreateResult>{
@@ -112,15 +116,27 @@ export default class AuthController {
                 email: session.user.email,
                 role: session.user.role
             });
+		}
+		
+		// Get user
+		var user = await Users.findOne({ email: email });
+        if (!user) {
+            return new Result(ResultCode.InvalidCredentials);
         }
 
-        // Authenticate
-        var user = await Users.findOne({
-            email: email,
-            passwordHash: passwordHash
-        });
+		// Calculate hash
+        var hash: string = null;
+        var hashAlg = Config.app.hashAlgorithm;
+        if (hashAlg == HashAlgorithm.Hash1) {
+            hash = hash1(user.passwordSalt, user.email, user.name, password);
+        }
 
-        if (user) {
+        // If no hash was calculated, there is a configuration error
+        if (!hash) {
+            throw new InternalServerError("Unable to compute password hash, configuration error!");
+		}
+		
+		if (hash == user.passwordHash) {
             // Create session
             session.authorized = true;
             session.user = user;
