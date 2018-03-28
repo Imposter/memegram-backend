@@ -5,7 +5,7 @@ import { JsonController, Get, Post, Delete, Authorized, BodyParam, Session, Inte
 import { Users, User } from "../models/user";
 import { SessionData } from "../models/session";
 import { AuthCreateResult } from "./results/auth";
-import { HashAlgorithm, Role } from "../core/common";
+import { HashAlgorithm, RoleType } from "../core/common";
 import { hash1 } from "../core/hash";
 
 const Config = getConfig();
@@ -57,7 +57,7 @@ export default class AuthController {
             passwordHashAlg: hashAlg,
             passwordHash: hash,
             passwordSalt: salt,
-            role: Role.User
+            role: RoleType.User
         });
 
         // Create session
@@ -149,7 +149,12 @@ export default class AuthController {
         } else {
             return new Result(ResultCode.InvalidCredentials);
         }
-    }
+	}
+	
+	@Get("/test")
+	test() {
+		throw new ResultError(ResultCode.Ok, "POOSI");
+	}
 
     @Authorized()
     @Delete("/logout")

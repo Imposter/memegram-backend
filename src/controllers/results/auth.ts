@@ -1,7 +1,7 @@
-import { Role } from "../../core/common";
+import { RoleType } from "../../core/common";
 
 export interface AuthCreateResult {
     name: string;
     email: string;
-    role: Role;
+    role: RoleType;
 }

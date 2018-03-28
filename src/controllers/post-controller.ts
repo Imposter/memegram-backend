@@ -4,7 +4,7 @@ import { JsonController, Get, Post, Delete, Authorized, Param, BodyParam, Upload
 import { Storage } from "../database/storage";
 import { SessionData } from "../models/session";
 import { Posts } from "../models/post";
-import { Role } from "../core/common";
+import { RoleType } from "../core/common";
 
 // Get Image model
 const Images = Storage.getModel("image");

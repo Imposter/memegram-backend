@@ -1,10 +1,10 @@
 import { Schema } from "../database/schema";
 import { prop, Ref, Typegoose, ModelType, InstanceType } from "typegoose";
-import { Role, HashAlgorithm } from "../core/common";
+import { RoleType, HashAlgorithm } from "../core/common";
 
 export class User extends Schema {
     @prop({ required: true })
-    name: string;
+    name: string; // TODO: Remove
 
     @prop({ required: true })
     email: string;
@@ -18,8 +18,8 @@ export class User extends Schema {
     @prop({ enum: HashAlgorithm, required: true })
     passwordHashAlg: HashAlgorithm;
 
-    @prop({ enum: Role, required: true })
-    role: Role;
+    @prop({ enum: RoleType, required: true })
+    role: RoleType;
 }
 
 export const Users = Schema.getModel(User);

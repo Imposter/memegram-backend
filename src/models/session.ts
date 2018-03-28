@@ -1,7 +1,6 @@
 import { getConfig } from "../config";
 import { Schema } from "../database/schema";
 import { prop, Ref, Typegoose, ModelType, InstanceType } from "typegoose";
-import { Role } from "../core/common";
 import { User } from "./user";
 
 const Config = getConfig();

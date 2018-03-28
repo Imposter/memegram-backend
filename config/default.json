@@ -1,5 +1,7 @@
 {
     "app": {
+		"adjectiveFile": "adjectives.txt",
+		"nounFile": "nouns.txt",
         "hashAlgorithm": 0,
         "postCharacterLimit": 100
     },
@@ -15,8 +17,12 @@
         "timeout": 60000
     },
     "mongo": {
-        "server": "localhost",
-        "port": 27017,
+        "servers": [
+			{
+				"host": "localhost",
+				"port": 27017
+			}
+		],
         "database": "memegram",
         "user": "memegram",
         "password": "password"

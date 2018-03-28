@@ -2,6 +2,8 @@ import * as log4js from "log4js";
 import * as config from "config";
 
 export interface AppConfig {
+	adjectiveFile: string;
+	nounFile: string;
     hashAlgorithm: number;
     postCharacterLimit: number;
 }
@@ -19,9 +21,13 @@ export interface SessionConfig {
     timeout: number;
 }
 
+export interface MongoServerConfig {
+	host: string;
+	port: number;
+}
+
 export interface MongoConfig {
-    server: string;
-    port: number;
+    servers: MongoServerConfig[];
     database: string;
     user?: string;
     password?: string;

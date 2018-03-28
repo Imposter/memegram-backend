@@ -13,13 +13,14 @@ import * as https from "https";
 import { getConfig, Config } from "./config";
 import { Schema } from "./database/schema";
 import { AuthChecker } from "./core/auth-checker";
+import { WordManager, WordType } from "./core/word-manager";
 import { User, Users } from "./models/user";
 import { MongooseSessionStore } from "./utility/mongoose-session-store";
 
-(async () => {
-    // Get environment
-    var environment = process.env.NODE_ENV || "dev";
+// Get environment
+const environment = process.env.NODE_ENV || "dev";
 
+(async () => {
     // Get config
     var config: Config = null;
     try {
@@ -36,21 +37,40 @@ import { MongooseSessionStore } from "./utility/mongoose-session-store";
     // Configure mongoose to use global promises
     (mongoose as any).Promise = global.Promise;
 
-    // Connect to MongoDB server
-    var connectionString = `mongodb://${config.mongo.server}:${config.mongo.port}/${config.mongo.database}`;
+	// Build mongo servers url
+	var servers = "";
+	for (var i = 0; i < config.mongo.servers.length; i++) {
+		var s = config.mongo.servers[i];
+		servers += `${s.host}:${s.port}`;
+		if (i < config.mongo.servers.length - 1) {
+			servers += ",";
+		}
+	}
+
+    var connectionString = `mongodb://${servers}/${config.mongo.database}`;
     try {
-        var options: mongoose.ConnectionOptions = { useMongoClient: true };
+        var options: mongoose.ConnectionOptions = {};
         if (config.mongo.user) {
             options.user = config.mongo.user;
             options.pass = config.mongo.password;
         }
 
         await mongoose.connect(connectionString, options);
-        log.info(`Connected to MongoDB: ${config.mongo.server}:${config.mongo.port}`);
+        log.info(`Connected to MongoDB: ${servers}`);
     } catch (error) {
         log.error(`Failed to connect to MongoDB: ${error}`);
         return;
-    }
+	}
+
+	// Check if word files exist
+	if (!fs.existsSync(config.app.adjectiveFile) || !fs.existsSync(config.app.nounFile) ) {
+		log.error("Adjectives or nouns file does not exist!");
+		return;
+	}
+	
+	// Store words in manager	
+	WordManager.readFile(config.app.adjectiveFile, WordType.Adjective);
+	WordManager.readFile(config.app.nounFile, WordType.Noun);
 
     // Create Express instance
     var app = express();

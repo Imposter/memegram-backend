@@ -3,7 +3,7 @@ import { Result, ResultError, ResultCode } from "../core/result";
 import { JsonController, Get, Post, Delete, Authorized, BodyParam, Session } from "routing-controllers";
 import { Users, User } from "../models/user";
 import { SessionData } from "../models/session";
-import { Role } from "../core/common";
+import { RoleType } from "../core/common";
 
 @JsonController("/user")
 export default class UserController {
