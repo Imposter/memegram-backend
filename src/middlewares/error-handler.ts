@@ -14,7 +14,7 @@ export class CustomErrorHandler implements ExpressErrorMiddlewareInterface {
             statusCode = error.code;
         } else {
             error.message = HttpStatus.getStatusText(httpCode);
-        }
+		}
 
         // Log error
         log.debug(`Request Error: Failed to process request from ${request.connection.remoteAddress}:${request.connection.remotePort} with error ${statusCode}: ${error.message}`);

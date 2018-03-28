@@ -1,3 +1,4 @@
+# Copyright (C) Pratheep Raveendranathan
 average 
 big 
 colossal 

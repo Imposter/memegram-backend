@@ -3,7 +3,6 @@ import * as mongoose from "mongoose";
 import * as express from "express";
 import * as session from "express-session";
 import * as uuid from "uuid";
-import * as cors from "cors";
 import * as compression from "compression";
 import * as ms from "express-mongo-sanitize";
 import * as rc from "routing-controllers";
@@ -13,7 +12,7 @@ import * as https from "https";
 import { getConfig, Config } from "./config";
 import { Schema } from "./database/schema";
 import { AuthChecker } from "./core/auth-checker";
-import { WordManager, WordType } from "./core/word-manager";
+import { NameManager } from "./core/name-manager";
 import { User, Users } from "./models/user";
 import { MongooseSessionStore } from "./utility/mongoose-session-store";
 
@@ -63,14 +62,13 @@ const environment = process.env.NODE_ENV || "dev";
 	}
 
 	// Check if word files exist
-	if (!fs.existsSync(config.app.adjectiveFile) || !fs.existsSync(config.app.nounFile) ) {
-		log.error("Adjectives or nouns file does not exist!");
+	if (!fs.existsSync(config.app.namesFile)) {
+		log.error("Names file does not exist!");
 		return;
 	}
 	
 	// Store words in manager	
-	WordManager.readFile(config.app.adjectiveFile, WordType.Adjective);
-	WordManager.readFile(config.app.nounFile, WordType.Noun);
+	NameManager.initialize(config.app.namesFile);
 
     // Create Express instance
     var app = express();
@@ -104,7 +102,10 @@ const environment = process.env.NODE_ENV || "dev";
         controllers: [`${__dirname}/controllers/**/*.js`],
         middlewares: [`${__dirname}/middlewares/**/*.js`],
         routePrefix: "/api",
-        cors: true,
+        cors: {
+			origin: true,
+			credentials: true
+		},
         authorizationChecker: AuthChecker,
         defaultErrorHandler: false,
         development: environment === "dev",

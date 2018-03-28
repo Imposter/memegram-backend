@@ -4,9 +4,6 @@ import { RoleType, HashAlgorithm } from "../core/common";
 
 export class User extends Schema {
     @prop({ required: true })
-    name: string; // TODO: Remove
-
-    @prop({ required: true })
     email: string;
 
     @prop({ required: true })

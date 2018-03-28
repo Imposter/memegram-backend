@@ -15,22 +15,17 @@ export default class AuthController {
     @Post("/create")
     async create(@Session() session: SessionData,
         @BodyParam("email") email: string,
-        @BodyParam("name") name: string,
         @BodyParam("password") password: string) {
         // Check if a session already exists (return failure)
         if (session.authorized) {
             return new Result(ResultCode.AlreadyAuthenticated, <AuthCreateResult>{
-                name: session.user.name,
                 email: session.user.email,
                 role: session.user.role
             });
         }
 
         // Check if an account already exists with either the username or email supplied
-        var user = await Users.findOne({
-            $or: [{ name: name }, { email: email }]
-        });
-
+        var user = await Users.findOne({ email: email });
         if (user) {
             return new Result(ResultCode.UserAlreadyExists);
         }
@@ -42,7 +37,7 @@ export default class AuthController {
         var hash: string = null;
         var hashAlg = Config.app.hashAlgorithm;
         if (hashAlg == HashAlgorithm.Hash1) {
-            hash = hash1(salt, email, name, password);
+            hash = hash1(salt, email, password);
         }
 
         // If no hash was calculated, there is a configuration error
@@ -52,7 +47,6 @@ export default class AuthController {
 
         // Create user and store in database
         user = await Users.create(<User>{
-            name: name,
             email: email,
             passwordHashAlg: hashAlg,
             passwordHash: hash,
@@ -65,27 +59,9 @@ export default class AuthController {
         session.user = user;
 
         return new Result(ResultCode.Ok, <AuthCreateResult>{
-            name: session.user.name,
             email: session.user.email,
             role: session.user.role
         });
-    }
-
-    @Post("/checkName")
-    async checkName(@Session() session: SessionData,
-        @BodyParam("name") name: string) {
-        // Check if session data already exists
-        if (session.authorized) {
-            return new Result(ResultCode.AlreadyAuthenticated);
-        }
-
-        // Check if an account already exists with the specified username
-        var user = await Users.findOne({ name: name });
-        if (user) {
-            return new Result(ResultCode.UserAlreadyExists);
-        }
-		
-		return new Result(ResultCode.UserAvailable);
     }
 
     @Post("/checkEmail")
@@ -105,6 +81,7 @@ export default class AuthController {
 		return new Result(ResultCode.UserAvailable);
     }
 
+	// TODO: Implement login attempt lockout
     @Post("/login")
     async login(@Session() session: SessionData,
         @BodyParam("email") email: string,
@@ -112,7 +89,6 @@ export default class AuthController {
         // Check if session data exists (return previous session)
         if (session.authorized) {
             return new Result(ResultCode.AlreadyAuthenticated, <AuthCreateResult>{
-                name: session.user.name,
                 email: session.user.email,
                 role: session.user.role
             });
@@ -128,7 +104,7 @@ export default class AuthController {
         var hash: string = null;
         var hashAlg = Config.app.hashAlgorithm;
         if (hashAlg == HashAlgorithm.Hash1) {
-            hash = hash1(user.passwordSalt, user.email, user.name, password);
+            hash = hash1(user.passwordSalt, user.email, password);
         }
 
         // If no hash was calculated, there is a configuration error
@@ -142,18 +118,12 @@ export default class AuthController {
             session.user = user;
 
             return new Result(ResultCode.Ok, <AuthCreateResult>{
-                name: session.user.name,
                 email: session.user.email,
                 role: session.user.role
             });
         } else {
             return new Result(ResultCode.InvalidCredentials);
         }
-	}
-	
-	@Get("/test")
-	test() {
-		throw new ResultError(ResultCode.Ok, "POOSI");
 	}
 
     @Authorized()

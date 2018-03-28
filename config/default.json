@@ -1,7 +1,6 @@
 {
     "app": {
-		"adjectiveFile": "adjectives.txt",
-		"nounFile": "nouns.txt",
+		"namesFile": "names.txt",
         "hashAlgorithm": 0,
         "postCharacterLimit": 100
     },

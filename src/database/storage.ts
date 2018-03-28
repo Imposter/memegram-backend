@@ -74,7 +74,11 @@ export class File {
 
     get id(): mongoose.Types.ObjectId {
         return this.instance._id;
-    }
+	}
+	
+	get handle(): gridfs.File {
+		return this.instance;
+	}
 
     public write(stream: Readable): Promise<File> {
         return new Promise((resolve, reject) => {

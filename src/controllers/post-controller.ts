@@ -3,8 +3,10 @@ import { Result, ResultError, ResultCode } from "../core/result";
 import { JsonController, Get, Post, Delete, Authorized, Param, BodyParam, UploadedFile, Session, NotFoundError } from "routing-controllers";
 import { Storage } from "../database/storage";
 import { SessionData } from "../models/session";
-import { Posts } from "../models/post";
+import { Post as PostData, Posts } from "../models/post";
 import { RoleType } from "../core/common";
+import { NameManager } from "../core/name-manager";
+import { PostCreateResult } from "./results/post";
 
 // Get Image model
 const Images = Storage.getModel("image");
@@ -13,7 +15,8 @@ const Images = Storage.getModel("image");
 export default class PostController {
 	@Authorized()
 	@Post("/create")
-	async createPost(@BodyParam("caption") caption: string,
+	async createPost(@BodyParam("topics") topics: string[],
+		@BodyParam("caption") caption: string,
 		@UploadedFile("file") file: Express.Multer.File) {
 		// Convert buffer to stream
         var stream = new PassThrough();
@@ -24,8 +27,25 @@ export default class PostController {
             filename: file.originalname,
             contentType: file.mimetype
 		}, stream);
+
+		// Generate name for user
+		var name = await NameManager.getName();
 		
-		// TODO: Write post to database
+		// Write post to database
+		var post = await Posts.create(<PostData>{
+			topics: topics,
+			name: name,
+			caption: caption,
+			likes: 0,
+			image: imageResult.handle
+		});
+
+		return new Result(ResultCode.Ok, <PostCreateResult>{
+			id: post.id,
+			name: name,
+			topics: topics,
+			caption: caption
+		})
 	}
 	
 	@Authorized()

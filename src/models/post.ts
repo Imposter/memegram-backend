@@ -6,6 +6,12 @@ import { prop, Ref, Typegoose, ModelType, InstanceType } from "typegoose";
 const Config = getConfig();
 
 export class Post extends Schema {
+	@prop({ required: true })
+	topics: string[];
+
+	@prop({ required: true })
+	name: string;
+
 	@prop({ required: true, maxlength: Config.app.postCharacterLimit })
 	caption: string;
 

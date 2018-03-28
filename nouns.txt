@@ -1,3 +1,4 @@
+# Copyright (C) atduskgreg
 Canidae
 Felidae
 Cat

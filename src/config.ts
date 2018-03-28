@@ -2,8 +2,7 @@ import * as log4js from "log4js";
 import * as config from "config";
 
 export interface AppConfig {
-	adjectiveFile: string;
-	nounFile: string;
+	namesFile: string;
     hashAlgorithm: number;
     postCharacterLimit: number;
 }
