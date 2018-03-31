@@ -1,7 +1,6 @@
 import * as log4js from "log4js";
 import * as mongoose from "mongoose";
 import * as express from "express";
-import * as session from "express-session";
 import * as uuid from "uuid";
 import * as compression from "compression";
 import * as ms from "express-mongo-sanitize";
@@ -11,10 +10,7 @@ import * as http from "http";
 import * as https from "https";
 import { getConfig, Config } from "./config";
 import { Schema } from "./database/schema";
-import { AuthChecker } from "./core/auth-checker";
 import { NameManager } from "./core/name-manager";
-import { User, Users } from "./models/user";
-import { MongooseSessionStore } from "./utility/mongoose-session-store";
 
 // Get environment
 const environment = process.env.NODE_ENV || "dev";
@@ -91,19 +87,6 @@ const environment = process.env.NODE_ENV || "dev";
     });
     app.use(compression());
     app.use(ms());
-    app.use(session({
-        genid: () => uuid.v4(),
-        secret: config.session.secret,
-        resave: false,
-        unset: "destroy",
-        saveUninitialized: false,
-        name: "session_id",
-        cookie: {
-            secure: config.express.secure || config.express.behindProxy,
-            maxAge: config.session.timeout
-        },
-        store: new MongooseSessionStore()
-    }));
 
     // Apply routing config to express app
     rc.useExpressServer(app, {
@@ -114,7 +97,6 @@ const environment = process.env.NODE_ENV || "dev";
             origin: true,
             credentials: true
         },
-        authorizationChecker: AuthChecker,
         defaultErrorHandler: false,
         development: environment === "dev",
         defaults: {

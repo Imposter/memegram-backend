@@ -11,10 +11,6 @@
         "key": null,
         "behindProxy": false
     },
-    "session": {
-        "secret": "01234567890123456789",
-        "timeout": 60000
-    },
     "mongo": {
         "servers": [
 			{

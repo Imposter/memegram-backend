@@ -15,11 +15,6 @@ export interface ExpressConfig {
     behindProxy?: boolean;
 }
 
-export interface SessionConfig {
-    secret: string;
-    timeout: number;
-}
-
 export interface MongoServerConfig {
 	host: string;
     port: number;
@@ -37,7 +32,6 @@ export interface MongoConfig {
 export interface Config {
     app: AppConfig;
     express: ExpressConfig;
-    session: SessionConfig;
     mongo: MongoConfig;
     log: log4js.Configuration;
 }
@@ -46,7 +40,6 @@ export function getConfig(): Config {
     return <Config>{
         app: config.get<AppConfig>("app"),
         express: config.get<ExpressConfig>("express"),
-        session: config.get<SessionConfig>("session"),
         mongo: config.get<MongoConfig>("mongo"),
         log: config.get<log4js.Configuration>("log")
     };
