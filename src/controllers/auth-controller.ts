@@ -1,10 +1,11 @@
 import * as uuid from "uuid";
 import { getConfig } from "../config";
 import { Result, ResultError, ResultCode } from "../core/result";
-import { JsonController, Get, Post, Delete, Authorized, BodyParam, Session, InternalServerError } from "routing-controllers";
+import { JsonController, Get as GetReq, Post as PostReq, Delete as DeleteReq, Authorized, 
+    BodyParam, Session, InternalServerError } from "routing-controllers";
 import { Users, User } from "../models/user";
 import { SessionData } from "../models/session";
-import { AuthCreateResult } from "./results/auth";
+import { AuthResult } from "./results/auth";
 import { HashAlgorithm, RoleType } from "../core/common";
 import { hash1 } from "../core/hash";
 
@@ -12,13 +13,13 @@ const Config = getConfig();
 
 @JsonController("/auth")
 export default class AuthController {
-    @Post("/create")
+    @PostReq("/create")
     async create(@Session() session: SessionData,
         @BodyParam("email") email: string,
         @BodyParam("password") password: string) {
         // Check if a session already exists (return failure)
         if (session.authorized) {
-            return new Result(ResultCode.AlreadyAuthenticated, <AuthCreateResult>{
+            return new Result(ResultCode.AlreadyAuthenticated, <AuthResult>{
                 email: session.user.email,
                 role: session.user.role
             });
@@ -58,13 +59,13 @@ export default class AuthController {
         session.authorized = true;
         session.user = user;
 
-        return new Result(ResultCode.Ok, <AuthCreateResult>{
+        return new Result(ResultCode.Ok, <AuthResult>{
             email: session.user.email,
             role: session.user.role
         });
     }
 
-    @Post("/checkEmail")
+    @PostReq("/checkEmail")
     async checkEmail(@Session() session: SessionData,
         @BodyParam("email") email: string) {
         // Check if session data already exists
@@ -82,13 +83,13 @@ export default class AuthController {
     }
 
 	// TODO: Implement login attempt lockout
-    @Post("/login")
+    @PostReq("/login")
     async login(@Session() session: SessionData,
         @BodyParam("email") email: string,
         @BodyParam("password") password: string) {
         // Check if session data exists (return previous session)
         if (session.authorized) {
-            return new Result(ResultCode.AlreadyAuthenticated, <AuthCreateResult>{
+            return new Result(ResultCode.AlreadyAuthenticated, <AuthResult>{
                 email: session.user.email,
                 role: session.user.role
             });
@@ -117,7 +118,7 @@ export default class AuthController {
             session.authorized = true;
             session.user = user;
 
-            return new Result(ResultCode.Ok, <AuthCreateResult>{
+            return new Result(ResultCode.Ok, <AuthResult>{
                 email: session.user.email,
                 role: session.user.role
             });
@@ -127,7 +128,7 @@ export default class AuthController {
 	}
 
     @Authorized()
-    @Delete("/logout")
+    @DeleteReq("/logout")
     delete(@Session() session: SessionData) {
         session.authorized = false;
         session.user = null;

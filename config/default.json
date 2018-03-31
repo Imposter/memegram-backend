@@ -21,7 +21,9 @@
 				"host": "localhost",
 				"port": 27017
 			}
-		],
+        ],
+        "secure": false,
+        "replica": false,
         "database": "memegram",
         "user": "memegram",
         "password": "password"

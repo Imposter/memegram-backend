@@ -33,42 +33,50 @@ const environment = process.env.NODE_ENV || "dev";
     log4js.configure(config.log);
     var log = log4js.getLogger("Main");
 
-    // Configure mongoose to use global promises
-    (mongoose as any).Promise = global.Promise;
-
-	// Build mongo servers url
-	var servers = "";
-	for (var i = 0; i < config.mongo.servers.length; i++) {
-		var s = config.mongo.servers[i];
-		servers += `${s.host}:${s.port}`;
-		if (i < config.mongo.servers.length - 1) {
-			servers += ",";
-		}
-	}
+    // Build mongo servers url
+    var servers = "";
+    for (var i = 0; i < config.mongo.servers.length; i++) {
+        var s = config.mongo.servers[i];
+        servers += `${s.host}:${s.port}`;
+        if (i < config.mongo.servers.length - 1) {
+            servers += ",";
+        }
+    }
 
     var connectionString = `mongodb://${servers}/${config.mongo.database}`;
     try {
-        var options: mongoose.ConnectionOptions = {};
+        var options: mongoose.ConnectionOptions = {
+            promiseLibrary: global.Promise,
+
+            // Shard options
+            ssl: config.mongo.secure,
+            autoReconnect: true,
+            socketTimeoutMS: 0,
+            reconnectTries: 1,
+            replicaSet: config.mongo.replica ? "memegram-rs" : null
+        };
+
         if (config.mongo.user) {
             options.user = config.mongo.user;
             options.pass = config.mongo.password;
         }
 
+        log.info(`Connecting to MongoDB ${config.mongo.replica ? "replica" : "shard"} server(s) ${servers}...`);
         await mongoose.connect(connectionString, options);
         log.info(`Connected to MongoDB: ${servers}`);
     } catch (error) {
         log.error(`Failed to connect to MongoDB: ${error}`);
         return;
-	}
+    }
 
-	// Check if word files exist
-	if (!fs.existsSync(config.app.namesFile)) {
-		log.error("Names file does not exist!");
-		return;
-	}
-	
-	// Store words in manager	
-	NameManager.initialize(config.app.namesFile);
+    // Check if word files exist
+    if (!fs.existsSync(config.app.namesFile)) {
+        log.error("Names file does not exist!");
+        return;
+    }
+
+    // Store words in manager	
+    NameManager.initialize(config.app.namesFile);
 
     // Create Express instance
     var app = express();
@@ -80,8 +88,8 @@ const environment = process.env.NODE_ENV || "dev";
     app.use((error: Error, request: express.Request, response: express.Response, next: (error: any) => any) => {
         log.error(`Express error: ${error.stack}`);
         next(error);
-	});
-	app.use(compression());
+    });
+    app.use(compression());
     app.use(ms());
     app.use(session({
         genid: () => uuid.v4(),
@@ -103,9 +111,9 @@ const environment = process.env.NODE_ENV || "dev";
         middlewares: [`${__dirname}/middlewares/**/*.js`],
         routePrefix: "/api",
         cors: {
-			origin: true,
-			credentials: true
-		},
+            origin: true,
+            credentials: true
+        },
         authorizationChecker: AuthChecker,
         defaultErrorHandler: false,
         development: environment === "dev",

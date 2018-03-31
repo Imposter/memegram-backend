@@ -22,11 +22,13 @@ export interface SessionConfig {
 
 export interface MongoServerConfig {
 	host: string;
-	port: number;
+    port: number;
 }
 
 export interface MongoConfig {
     servers: MongoServerConfig[];
+    secure?: boolean;
+    replica?: boolean;
     database: string;
     user?: string;
     password?: string;

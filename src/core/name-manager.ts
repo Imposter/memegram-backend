@@ -32,6 +32,7 @@ export class NameManager {
 				}
 
 				name = currentName;
+				break;
 			}
 
 			if (availableNames.length == 0) {
