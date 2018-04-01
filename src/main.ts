@@ -39,10 +39,14 @@ const environment = process.env.NODE_ENV || "dev";
         }
     }
 
+    // Use global promises instead of mpromise
+    (mongoose as any).Promise = global.Promise;
+
     var connectionString = `mongodb://${servers}/${config.mongo.database}`;
     try {
         var options: mongoose.ConnectionOptions = {
-            promiseLibrary: global.Promise,
+            // Use mongo client for connecting (sometimes Mongoose complains about not having this options, other times not!)
+            //useMongoClient: true,
 
             // Shard options
             ssl: config.mongo.secure,

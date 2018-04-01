@@ -1,7 +1,7 @@
 import { getConfig } from "../config";
 import { Schema } from "../database/schema";
 import { gridfs } from "../database/storage";
-import { prop, arrayProp, Ref, Typegoose, ModelType, InstanceType } from "typegoose";
+import { prop, Ref, Typegoose, ModelType, InstanceType } from "typegoose";
 import { Comment } from "./comment";
 
 const Config = getConfig();
@@ -18,9 +18,6 @@ export class Post extends Schema {
 
 	@prop({ required: true, ref: "Images" })
 	image: Ref<gridfs.File>;
-
-	@arrayProp({ itemsRef: Comment, default: [] })
-	comments?: Ref<Comment>[];
 }
 
 export const Posts = Schema.getModel(Post);

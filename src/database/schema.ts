@@ -5,7 +5,7 @@ import * as mongoose from "mongoose";
 (mongoose as any).Promise = global.Promise;
 
 // Import typegoose and gridfs
-import { prop, pre, ModelType, Typegoose, InstanceType } from "typegoose";
+import { prop, pre, plugin, ModelType, Typegoose, InstanceType } from "typegoose";
 
 @pre<Schema>("save", function (next) {
     this.updatedAt = new Date();
@@ -27,7 +27,30 @@ export class Schema extends Typegoose {
 
     public static getModel<TSchema extends Schema>(schemaType: new () => TSchema): mongoose.Model<InstanceType<TSchema>> {
         return new schemaType().getModelForClass(schemaType, {
-            existingMongoose: mongoose
+            existingMongoose: mongoose,
+            schemaOptions: {
+                toJSON: {
+                    transform: function (doc, ret, options) {
+                        // Remove _id and replace with id
+                        ret.id = ret._id.toString();
+                        delete ret._id;
+                        delete ret.__v;
+
+                        // For any other properties of type ObjectID, replace with a string value
+                        var paths = doc.schema.paths;
+                        for (var path in paths) {
+                            // Skip _id as it has already been dealt with
+                            if (path == "_id")
+                                continue;
+
+                            var pathType = paths[path].instance;
+                            if (pathType == "ObjectID") {
+                                ret[path] = ret[path].toString();
+                            }
+                        }
+                    }
+                }
+            }
         });
     }
 }

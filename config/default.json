@@ -2,7 +2,8 @@
     "app": {
 		"namesFile": "names.txt",
         "hashAlgorithm": 0,
-        "postCharacterLimit": 100
+        "postCharacterLimit": 100,
+        "mostPopularTime": 172800
     },
     "express": {
         "port": 12400,

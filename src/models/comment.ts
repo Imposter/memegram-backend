@@ -14,3 +14,5 @@ export class Comment extends Schema {
     @prop({ required: true })
     comment: string;
 }
+
+export const Comments = Schema.getModel(Comment);

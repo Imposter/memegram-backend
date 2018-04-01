@@ -4,14 +4,12 @@ import { HttpError } from "routing-controllers";
 export enum ResultCode {
     Ok = 1000,
     InternalError = 1001,
-    Unauthorized = 1002,
 
-    // User component
-    InvalidUserId = 1100,
-    InvalidCredentials = 1101,
-    AlreadyAuthenticated = 1102,
-	UserAlreadyExists = 1103,
-	UserAvailable = 1104,
+    // Post component
+    InvalidPostId = 1100,
+
+    // Comment component
+
 
     // ...
 
@@ -29,13 +27,14 @@ export class Result {
 
     private static toJSONArray(elems: any[]) {
         var result = [];
-        elems.forEach(element => {
+        for (var i = 0; i < elems.length; i++) {
+            var element = elems[i];
             if (Array.isArray(element)) {
                 result.push(Result.toJSONArray(element));
             } else {
                 result.push(element.toJSON());
             }
-        });
+        };
         return result;
     }
 }

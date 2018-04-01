@@ -5,6 +5,7 @@ export interface AppConfig {
 	namesFile: string;
     hashAlgorithm: number;
     postCharacterLimit: number;
+    mostPopularTime: number;
 }
 
 export interface ExpressConfig {
