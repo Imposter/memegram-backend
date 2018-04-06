@@ -3,6 +3,8 @@
 		"namesFile": "names.txt",
         "hashAlgorithm": 0,
         "postCharacterLimit": 100,
+        "postImageWidthLimit": 800,
+        "postImageHeightLimit": 1200,
         "mostPopularTime": 172800
     },
     "express": {

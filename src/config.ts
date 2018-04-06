@@ -5,6 +5,8 @@ export interface AppConfig {
 	namesFile: string;
     hashAlgorithm: number;
     postCharacterLimit: number;
+    postImageWidthLimit: number;
+    postImageHeightLimit: number;
     mostPopularTime: number;
 }
 

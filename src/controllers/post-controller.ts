@@ -1,3 +1,4 @@
+import * as sharp from "sharp";
 import { getConfig } from "../config";
 import { PassThrough } from "stream";
 import { Result, ResultError, ResultCode } from "../core/result";
@@ -20,9 +21,15 @@ export default class PostController {
 		@BodyParam("topics", { required: false }) topics: string[],
 		@BodyParam("caption") caption: string,
 		@UploadedFile("file") file: Express.Multer.File) {
+		// Resize image buffer to not be greater than the limit set
+		var buffer = await sharp(file.buffer)
+			.resize(Config.app.postImageWidthLimit, Config.app.postImageHeightLimit)
+			.max()
+			.toBuffer();
+
 		// Convert buffer to stream
         var stream = new PassThrough();
-		stream.end(file.buffer);
+		stream.end(buffer);
 
         // Write to database
         var imageResult = await Images.write({
