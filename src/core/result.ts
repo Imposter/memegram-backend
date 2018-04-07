@@ -7,6 +7,7 @@ export enum ResultCode {
 
     // Post component
     InvalidPostId = 1100,
+    InvalidCaptionTooLong = 1101,
 
     // Comment component
 

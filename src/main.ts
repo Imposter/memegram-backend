@@ -98,9 +98,12 @@ const environment = process.env.NODE_ENV || "dev";
         middlewares: [`${__dirname}/middlewares/**/*.js`],
         routePrefix: "/api",
         cors: {
-            origin: true,
+            origin: function(origin, callback) {
+                callback(null, true);   
+            },
             credentials: true
         },
+        classTransformer: false,
         defaultErrorHandler: false,
         development: environment === "dev",
         defaults: {

@@ -12,7 +12,7 @@ export class CustomErrorHandler implements ExpressErrorMiddlewareInterface {
         var statusCode = httpCode;
         if (error.code != null) {
             statusCode = error.code;
-        } else {
+        } else if (error.message == null) {
             error.message = HttpStatus.getStatusText(httpCode);
 		}
 

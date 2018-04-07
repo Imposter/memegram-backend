@@ -1,6 +1,6 @@
 import * as os from "os";
-import { Result, ResultError, ResultCode } from "../core/result";
-import { JsonController, Get as GetReq, Authorized, Req, Res, InternalServerError } from "routing-controllers";
+import { Result, ResultCode } from "../core/result";
+import { JsonController, Get as GetReq } from "routing-controllers";
 
 @JsonController("/system")
 export default class SystemController {

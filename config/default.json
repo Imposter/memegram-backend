@@ -5,6 +5,7 @@
         "postCharacterLimit": 100,
         "postImageWidthLimit": 800,
         "postImageHeightLimit": 1200,
+        "postImageSizeLimit": 12582912,
         "mostPopularTime": 172800
     },
     "express": {
