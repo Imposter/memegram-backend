@@ -8,6 +8,7 @@ export interface AppConfig {
     postImageWidthLimit: number;
     postImageHeightLimit: number;
     postImageSizeLimit: number;
+    commentCharacterLimit: number;
     mostPopularTime: number;
 }
 

@@ -10,6 +10,7 @@ export enum ResultCode {
     InvalidCaptionTooLong = 1101,
 
     // Comment component
+    InvalidCommentTooLong = 1201,
 
 
     // ...

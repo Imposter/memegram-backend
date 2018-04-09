@@ -15,24 +15,38 @@ export default class CommentController {
 	@PostReq("/create")
 	async createComment(@BodyParam("postId") postId: string,
 		@BodyParam("name", { required: false }) name: string,
-		@BodyParam("caption") caption: string) {
+		@BodyParam("comment") comment: string) {
 		// Check if post exists
 		var post = await Posts.findById(postId);
 		if (!post) {
 			throw new ResultError(ResultCode.InvalidPostId, "Post not found");
 		}
 
+		// Check comment size limit
+		if (comment.length > Config.app.commentCharacterLimit) {
+			throw new ResultError(ResultCode.InvalidCommentTooLong, "Comment too long");
+		}
+
+		// Get all comments for post
+		var comments = await Comments.find({});
+
+		// Get all used names
+		var names = [];
+		for (var c of comments) {
+			names.push(c.name);
+		}
+
 		// Generate name for user, if one wasn't provided
-		name = name || await NameManager.getName();
+		name = name || await NameManager.getName(names);
 
 		// Post comment
-		var comment = await Comments.create({
+		var result = await Comments.create({
 			post: post,
 			name: name,
-			comment: caption
+			comment: comment
 		});
 
-		return new Result(ResultCode.Ok, comment);
+		return new Result(ResultCode.Ok, result);
 	}
 
 	@PostReq("/find")
@@ -48,17 +62,47 @@ export default class CommentController {
 		// Build query
 		var query: any = { post: post };
 		if (from) {
-			query.createdAt = { $lte: from };
+			query.createdAt = { $gte: from };
 		}
 
 		// Get comments
 		var comments;
 		if (count) {
-			comments = await Comments.find(query).limit(count).sort("createdAt"); // ascending
+			comments = await Comments.find(query).limit(count).sort("createdAt"); // Old to new
 		} else {
-			comments = await Comments.find(query).sort("createdAt"); // ascending
+			comments = await Comments.find(query).sort("createdAt"); // Old to new
 		}
 
 		return new Result(ResultCode.Ok, comments, true);
+	}
+
+	@PostReq("/name")
+	async getRandomName(@BodyParam("postId") postId: string) {
+		// Check if post exists
+		var post = await Posts.findById(postId);
+		if (!post) {
+			throw new ResultError(ResultCode.InvalidPostId, "Post not found");
+		}
+
+		// Get all comments for post
+		var comments = await Comments.find({});
+
+		// Get all used names
+		var names = [];
+		for (var c of comments) {
+			names.push(c.name);
+		}
+
+		// Generate name for user
+		var name = await NameManager.getName(names);
+
+		return new Result(ResultCode.Ok, name);
+	}
+
+	@GetReq("/settings")
+	async getSettings() {
+		return new Result(ResultCode.Ok, {
+			commentCharacterLimit: Config.app.commentCharacterLimit
+		});
 	}
 }

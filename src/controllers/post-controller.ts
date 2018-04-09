@@ -20,6 +20,11 @@ export default class PostController {
 		@BodyParam("topics", { required: false }) topics: string[],
 		@BodyParam("caption") caption: string,
 		@UploadedFile("file", { options: { limits: { fileSize: Config.app.postImageSizeLimit } } }) file: Express.Multer.File) {
+		// Check caption size limit
+		if (caption.length > Config.app.postCharacterLimit) {
+			throw new ResultError(ResultCode.InvalidCaptionTooLong, "Caption too long");
+		}
+
 		// Resize image buffer to not be greater than the limit set
 		var buffer = await sharp(file.buffer)
 			.resize(Config.app.postImageWidthLimit, Config.app.postImageHeightLimit)
@@ -36,11 +41,6 @@ export default class PostController {
 			filename: file.originalname,
 			contentType: file.mimetype
 		}, stream);
-
-		// Check caption size limit
-		if (caption.length > Config.app.postCharacterLimit) {
-			throw new ResultError(ResultCode.InvalidCaptionTooLong, "Caption too long");
-		}
 
 		// Generate name for user, if one wasn't provided
 		name = name || await NameManager.getName();
@@ -89,36 +89,9 @@ export default class PostController {
 		// Get posts
 		var posts;
 		if (count) {
-			posts = await Posts.find(query).limit(count).sort("-createdAt");
+			posts = await Posts.find(query).limit(count).sort("-createdAt"); // New to old
 		} else {
-			posts = await Posts.find(query).sort("-createdAt");
-		}
-
-		return new Result(ResultCode.Ok, posts, true);
-	}
-
-	@PostReq("/find/mostPopular")
-	async getMostPopularPosts(@BodyParam("from", { required: false }) from: Date,
-		@BodyParam("count", { required: false }) count: number) {
-		// Get all posts for topics
-		var query: any = {
-			createdAt: {
-				$gte: new Date(
-					(new Date().getTime() // Get time since epoch (in milliseconds)
-						- Config.app.mostPopularTime * 1000)) // Remove popular time (in milliseconds)
-			}
-		};
-
-		if (from) {
-			query.createdAt = { $lte: from };
-		}
-
-		// Get posts
-		var posts;
-		if (count) {
-			posts = await Posts.find(query).limit(count).sort("-createdAt");
-		} else {
-			posts = await Posts.find(query).sort("-createdAt");
+			posts = await Posts.find(query).sort("-createdAt"); // New to old
 		}
 
 		return new Result(ResultCode.Ok, posts, true);
