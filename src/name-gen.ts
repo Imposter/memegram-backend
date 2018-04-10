@@ -1,23 +1,15 @@
 import * as fs from "fs";
 import * as os from "os";
+import { getConfig, Config } from "./config";
 import { getRandomInt } from "./utility/random";
 
 const NameLengthLimit = 15;
 const IgnoreWords = [ "list" ];
+const Config = getConfig();
 
-enum WordType {
-	Noun,
-	Adjective
-}
-
-interface Word {
-	word: string;
-	type: WordType;
-}
-
-function readFileWords(file: string, wordType: WordType): Word[] {
+function readFileWords(file: string): string[] {
 	// Create result
-	var result: Word[] = [];
+	var result: string[] = [];
 
 	// Read file and words
 	var words = fs.readFileSync(file).toString().split(os.EOL);
@@ -38,37 +30,28 @@ function readFileWords(file: string, wordType: WordType): Word[] {
 			continue;
 		}
 
-		result.push(<Word>{
-			word: word,
-			type: wordType
-		});
+		result.push(word);
 	}
 
 	return result;
 }
 
 (function() {
-	console.log("Please be patient, this process can take up to several minutes...");
-
 	// Read words
-	var words = readFileWords("adjectives.txt", WordType.Adjective);
-	words = words.concat(readFileWords("nouns.txt", WordType.Noun));
+	var adjectives = readFileWords("adjectives.txt");
+	var nouns = readFileWords("nouns.txt");
 
 	// Generate names
 	console.log("Generating names...");
 
 	// Create write stream
-	var file = fs.createWriteStream("names.txt");
-	
-	// Get adjectives and nouns
-	var adjectives = words.filter(word => word.type == WordType.Adjective);
-	var nouns = words.filter(word => word.type == WordType.Noun);
+	var file = fs.createWriteStream(Config.app.namesFile);
 
 	for (let adjective of adjectives) {
 		for (let noun of nouns) {
 			// Clean words
-			var p1 = adjective.word.replace(/[^a-zA-Z]/g, "");
-			var p2 = noun.word.replace(/[^a-zA-Z]/g, "");
+			var p1 = adjective.replace(/[^a-zA-Z]/g, "");
+			var p2 = noun.replace(/[^a-zA-Z]/g, "");
 
 			if (IgnoreWords.indexOf(p1.toLowerCase()) > -1
 				|| IgnoreWords.indexOf(p2.toLowerCase()) > -1) {
