@@ -72,14 +72,27 @@ export default class PostController {
 		// Get all posts for topics
 		var query: any = {};
 
-		// Set key words
+		// Build keyword query
 		if (keywords != null) {
-			query.caption = new RegExp(`^${keywords}$`, "i");
+			// Remove special characters from keywords
+			keywords = keywords.replace(/[^a-zA-Z ']/g, "");
+
+			// Split words by spaces
+			var splitWords = keywords.split(" ");
+
+			// Remove empty words
+			splitWords = splitWords.filter(word => word != undefined && word.length != 0);
+
+			// Join to make or statement
+			keywords = splitWords.join("|");
+
+			// Set regex for matching those words
+			query.caption = new RegExp(`^.*\\b(${keywords})\\b.*$`, "gi");
 		}
 
 		// Set topics
 		if (regexTopics.length > 0) {
-			query.topics = { $all: topics };
+			query.topics = { $all: regexTopics };
 		}
 
 		if (from) {
