@@ -57,7 +57,8 @@ export default class PostController {
 	}
 
 	@PostReq("/find")
-	async getPosts(@BodyParam("topics", { required: false }) topics: string[],
+	async getPosts(@BodyParam("id", { required: false }) id: string,
+		@BodyParam("topics", { required: false }) topics: string[],
 		@BodyParam("keywords", { required: false }) keywords: string,
 		@BodyParam("from", { required: false }) from: Date,
 		@BodyParam("count", { required: false }) count: number) {
@@ -72,6 +73,11 @@ export default class PostController {
 		// Get all posts for topics
 		var query: any = {};
 
+		// Set post id
+		if (id != null) {
+			query._id = id;
+		}
+
 		// Build keyword query
 		if (keywords != null) {
 			// Remove special characters from keywords
@@ -81,7 +87,7 @@ export default class PostController {
 			var splitWords = keywords.split(" ");
 
 			// Remove empty words
-			splitWords = splitWords.filter(word => word != undefined && word.length != 0);
+			splitWords = splitWords.filter(word => word != null && word.length != 0);
 
 			// Join to make or statement
 			keywords = splitWords.join("|");
