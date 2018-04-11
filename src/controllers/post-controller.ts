@@ -66,7 +66,7 @@ export default class PostController {
 		var regexTopics = [];
 		if (topics != null) {
 			for (var topic of topics) {
-				regexTopics.push(new RegExp(topic, "i"));
+				regexTopics.push(this.getMatchWordsRegExp(topic));
 			}
 		}
 
@@ -80,20 +80,7 @@ export default class PostController {
 
 		// Build keyword query
 		if (keywords != null) {
-			// Remove special characters from keywords
-			keywords = keywords.replace(/[^a-zA-Z ']/g, "");
-
-			// Split words by spaces
-			var splitWords = keywords.split(" ");
-
-			// Remove empty words
-			splitWords = splitWords.filter(word => word != null && word.length != 0);
-
-			// Join to make or statement
-			keywords = splitWords.join("|");
-
-			// Set regex for matching those words
-			query.caption = new RegExp(`^.*\\b(${keywords})\\b.*$`, "gi");
+			query.caption = this.getMatchWordsRegExp(keywords);
 		}
 
 		// Set topics
@@ -143,5 +130,22 @@ export default class PostController {
 			postCharacterLimit: Config.app.postCharacterLimit,
 			postImageSizeLimit: Config.app.postImageSizeLimit
 		});
+	}
+
+	getMatchWordsRegExp(words: string): RegExp {
+		// Remove special characters from words
+		words = words.replace(/[^a-zA-Z ']/g, "");
+
+		// Split words by spaces
+		var splitWords = words.split(" ");
+
+		// Remove empty words
+		splitWords = splitWords.filter(word => word != null && word.length != 0);
+
+		// Join to make or statement
+		words = splitWords.join("|");
+
+		// Set regex for matching those words
+		return new RegExp(`^.*\\b(${words})\\b.*$`, "gi");
 	}
 }
