@@ -3,13 +3,11 @@ import * as config from "config";
 
 export interface AppConfig {
 	namesFile: string;
-    hashAlgorithm: number;
     postCharacterLimit: number;
     postImageWidthLimit: number;
     postImageHeightLimit: number;
     postImageSizeLimit: number;
     commentCharacterLimit: number;
-    mostPopularTime: number;
 }
 
 export interface ExpressConfig {

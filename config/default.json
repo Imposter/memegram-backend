@@ -1,13 +1,11 @@
 {
     "app": {
 		"namesFile": "names.txt",
-        "hashAlgorithm": 0,
         "postCharacterLimit": 100,
         "postImageWidthLimit": 800,
         "postImageHeightLimit": 1200,
         "postImageSizeLimit": 12582912,
-        "commentCharacterLimit": 100,
-        "mostPopularTime": 172800
+        "commentCharacterLimit": 100
     },
     "express": {
         "port": 12400,
